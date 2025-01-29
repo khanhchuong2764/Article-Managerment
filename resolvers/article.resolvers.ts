@@ -5,7 +5,10 @@ import Category from "../models/category.model";
 export const Articleresolvers  = {
     Query: {
       getListArticle: async (_,args) => {
-        const {sortKey,sortValue,currentPage,limitItem} = args;
+        const find = {
+          deleted:false
+        }
+        const {sortKey,sortValue,currentPage,limitItem,filterKey,filterValue,keyword} = args;
         // Sort
         const sort = {};
         if(sortKey&&sortValue) {
@@ -15,9 +18,18 @@ export const Articleresolvers  = {
         // Pagination
         const skip = (currentPage - 1) * limitItem;
         // End Pagination
-        const articles = await Article.find({
-          deleted:false
-        }).sort(sort).limit(limitItem).skip(skip);
+        // Fillter
+        if(filterKey &&filterValue) {
+          find[filterKey] = filterValue;
+        }
+        //End Fillter
+        // Search
+        if(keyword) {
+          const regexKeyword = new RegExp(keyword,"i");
+          find["title"] = regexKeyword;
+        }
+        // End Search
+        const articles = await Article.find(find).sort(sort).limit(limitItem).skip(skip);
         return articles;
       },
       getArticle: async (_,args) => {
