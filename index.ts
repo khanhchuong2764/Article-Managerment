@@ -5,6 +5,7 @@ import { ApolloServer, gql } from "apollo-server-express";
 import { Query } from "mongoose";
 import {typeDefs} from "./typeDefs/index.typeDefs"
 import { resolvers } from "./resolvers/index.resolvers";
+import { requestAuth } from "./middleware/auth.middleware";
 const startServer = async () => {
   dotenv.config();
   const app:any = express();
@@ -13,9 +14,14 @@ const startServer = async () => {
 
   const apolloServer = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: ({req}) => {
+      return {
+        req:req
+      }
+    }
   })
-
+  app.use("/graphql",requestAuth);
   await apolloServer.start();
 
   apolloServer.applyMiddleware({

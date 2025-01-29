@@ -15,14 +15,17 @@ export const Articleresolvers  = {
           sort[sortKey] = sortValue;
         }
         // End Sort
+
         // Pagination
         const skip = (currentPage - 1) * limitItem;
         // End Pagination
+
         // Fillter
         if(filterKey &&filterValue) {
           find[filterKey] = filterValue;
         }
         //End Fillter
+        
         // Search
         if(keyword) {
           const regexKeyword = new RegExp(keyword,"i");
